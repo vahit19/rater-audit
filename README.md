@@ -9,6 +9,8 @@ Every simulated result has a control arm where nothing should go wrong; two resu
 
 **Video (5 minutes):** [media/rater-audit_video.mp4](media/rater-audit_video.mp4)
 
+https://github.com/user-attachments/assets/092f2336-4422-493e-8f45-41cf73e24b4a
+
 ![Agreement stays high while the majority is wrong on hard items](figures/fig1_agreement_vs_accuracy.png)
 
 | Stage | What looks fine | What is true | Control |
