@@ -7,6 +7,8 @@ acceptance samples, and each of those can pass bad work. This repo audits every 
 pipeline, shows what goes wrong, measures a fix, and turns it into a QA summary for each delivered batch.
 Every simulated result has a control arm where nothing should go wrong; two results use 3,355 real expert votes.
 
+**Video (5 minutes):** [media/rater-audit_video.mp4](media/rater-audit_video.mp4)
+
 ![Agreement stays high while the majority is wrong on hard items](figures/fig1_agreement_vs_accuracy.png)
 
 | Stage | What looks fine | What is true | Control |
