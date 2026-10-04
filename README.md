@@ -8,7 +8,7 @@ expert gold label, and runs as a per-batch quality gate next to a rating platfor
 
 Video Overview
 
-https://github.com/user-attachments/assets/092f2336-4422-493e-8f45-41cf73e24b4a
+https://github.com/user-attachments/assets/57304229-d6b7-4184-8e96-21a91306eda6
 
 ## On real ratings with an expert gold label
 
