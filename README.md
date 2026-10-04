@@ -29,6 +29,17 @@ conversations serve as the gold set and every number below is measured on the ot
 | Canary items | 20 items where the model is known to be wrong | a rater copying the model on 70% of items is flagged 87% of the time (50%: 47%); honest real raters 0.8% |
 | Acceptance | 98-item review for a 5% contract | no method passes (defect rates 31% to 38%): the contract target must be set against the expert policy |
 
+## When expert votes rank models
+
+MT-Bench: 3,355 real expert votes comparing the answers of six models on 80 questions, and 2,400 votes from a
+GPT-4 judge on the same pairs. Intervals come from 2,000 resamples of the questions.
+
+![Six models ranked from expert votes and from a GPT-4 judge](figures/fig6_model_ranking.png)
+*Left: the experts separate the six models into five tiers, not six ranks (GPT-3.5 and Claude-v1 are tied at 65%); the GPT-4 judge puts Claude-v1 clearly ahead (71% vs 61%). Right: a 10-question evaluation finds the top model 77% of the time; even 40 questions recover the full ranking only about half the time.*
+
+![Agreement between experts and the GPT-4 judge, and rater screens on real experts](figures/fig7_judges_real_data.png)
+*Left: a two-sigma screen flags 2 of 59 experts, about what sampling noise alone would flag (1.5). Right: GPT-4 agrees with experts as often as experts agree with each other (86% vs 83%, ties excluded), but changes 16% of its verdicts when the two answers swap places.*
+
 ## Why it happens: the mechanism, with a known answer
 
 Simulated panels where the truth is known show the mechanism in isolation, each with a control arm where nothing
@@ -85,8 +96,6 @@ Every threshold lives in the TOML config, not in the code. Build plan and integr
 | *Real model outputs: GPT-4o-mini against the expert label, and canaries built from its real errors.* | *Simulation: an agreement screen drops the expert who is right when most raters share an error.* |
 | ![](figures/fig4_acceptance.png) | ![](figures/fig5_llm_written_ratings.png) |
 | *Chance that a batch passes, by its true defect rate: a 20-item check passes an 8% batch half the time; the sized plan (98 items, 4 defects) does not.* | *Simulation: canary items catch a rater who lets a model write the ratings; honest raters are almost never flagged.* |
-| ![](figures/fig6_model_ranking.png) | ![](figures/fig7_judges_real_data.png) |
-| *Real expert votes: six models fall into five tiers, and a GPT-4 judge separates two models the experts cannot. Even 40 questions recover the full ranking only about half the time.* | *Real expert votes: most of the spread between experts is sampling noise, and GPT-4 changes 16% of verdicts when the two answers swap places.* |
 | ![](figures/fig8_sensitivity.png) | |
 | *Each simulation assumption moved one at a time: where the findings hold and where they stop.* | |
 </details>
