@@ -12,10 +12,13 @@ Video Overview
 https://github.com/user-attachments/assets/092f2336-4422-493e-8f45-41cf73e24b4a
 
 ![Agreement stays high while the majority is wrong on hard items](figures/fig1_agreement_vs_accuracy.png)
+*Experts agree on 84% of ratings, but on hard items the majority is right only 36% of the time; agreement stays high as hard items grow.*
 
 ![The agreement screen drops the expert who is right; screening on gold accuracy does not](figures/fig2_rater_screens.png)
+*Dropping the least-agreeing raters removes a deep expert (green star, red ring) in every run and lowers hard-item accuracy; screening on gold accuracy raises it.*
 
-<img src="figures/fig3_route_hard_items.png" width="62%" alt="The fix: route the weak item type to qualified reviewers">
+<p align="center"><img src="figures/fig3_route_hard_items.png" width="62%" alt="The fix: route the weak item type to qualified reviewers"></p>
+<p align="center"><i>The fix: find the weak item type on gold items and route it to qualified reviewers. Hard items go from 36% to 76% correct, for half an extra label per item.</i></p>
 
 | Stage | What looks fine | What is true | Control |
 |---|---|---|---|
@@ -62,7 +65,9 @@ Example output: [examples/qa_summary.md](examples/qa_summary.md).
 |---|---|
 | ![](figures/fig2_rater_screens.png) | ![](figures/fig3_route_hard_items.png) |
 | ![](figures/fig4_acceptance.png) | ![](figures/fig5_llm_written_ratings.png) |
+| *Chance that a batch passes, by its true defect rate: a 20-item check passes an 8% batch half the time; the sized plan (98 items, 4 defects) does not.* | *Canary items catch a rater who lets a model write the ratings; honest raters are almost never flagged (control).* |
 | ![](figures/fig6_model_ranking.png) | ![](figures/fig7_judges_real_data.png) |
+| *Real expert votes: six models fall into five tiers, and a GPT-4 judge separates two models the experts cannot. Small sprints rarely recover the full ranking.* | *Real expert votes: most of the spread between experts is sampling noise, and GPT-4 changes 16% of verdicts when the two answers swap places.* |
 
 Simulation set-up: 2,000 items, 10 raters, 3 ratings per item, 20% hard items on which typical raters are right
 30% of the time and two deep experts 85%; 300 runs per arm (500 for canaries). Gold items are a random 10%.
