@@ -7,7 +7,7 @@ acceptance samples, and each of those can pass bad work. This repo audits every 
 pipeline, shows what goes wrong, measures a fix, and turns it into a QA summary for each delivered batch.
 Every simulated result has a control arm where nothing should go wrong; two results use 3,355 real expert votes.
 
-**Video (5 minutes):** [media/rater-audit_video.mp4](media/rater-audit_video.mp4)
+**Video (5 minutes):
 
 https://github.com/user-attachments/assets/092f2336-4422-493e-8f45-41cf73e24b4a
 
