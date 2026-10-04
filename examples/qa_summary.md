@@ -1,6 +1,6 @@
 # Batch QA summary
 
-2030 items, 6330 ratings, 11 raters, 200 gold items.
+2030 items, 6330 ratings, 11 raters, 200 gold items. Quality gate: **FAIL**.
 
 ## 1. Agreement and accuracy
 

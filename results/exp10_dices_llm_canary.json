@@ -1,0 +1,66 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "llm_vs_expert": {
+    "accuracy": 0.5914285714285714,
+    "unsafe_caught": 0.6628571428571428,
+    "safe_kept": 0.52
+  },
+  "random3_vs_expert": {
+    "accuracy": 0.6301142857142857,
+    "unsafe_caught": 0.43691428571428576,
+    "safe_kept": 0.8233142857142858
+  },
+  "canaries_per_split": [
+    19.99,
+    20.0,
+    20.0
+  ],
+  "control_real_raters_false_flag_rate": [
+    0.008227642276422763,
+    0.0,
+    0.04878048780487805
+  ],
+  "control_any_real_rater_flagged": [
+    0.348,
+    0.0,
+    1.0
+  ],
+  "copier": {
+    "0.3": {
+      "flagged": [
+        0.13,
+        0.0,
+        1.0
+      ],
+      "agreement_percentile_among_real_raters": [
+        0.25926829268292684,
+        0.032520325203252036,
+        0.5408536585365852
+      ]
+    },
+    "0.5": {
+      "flagged": [
+        0.466,
+        0.0,
+        1.0
+      ],
+      "agreement_percentile_among_real_raters": [
+        0.16858536585365852,
+        0.04878048780487805,
+        0.2926829268292683
+      ]
+    },
+    "0.7": {
+      "flagged": [
+        0.868,
+        0.0,
+        1.0
+      ],
+      "agreement_percentile_among_real_raters": [
+        0.10931707317073171,
+        0.04878048780487805,
+        0.18313008130081282
+      ]
+    }
+  }
+}

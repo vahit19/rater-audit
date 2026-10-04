@@ -80,3 +80,37 @@ def test_report_on_example_batch():
     assert "| r11 | 30 |" in md and "YES: review this rater" in md
     assert "Decision under the plan: **REJECT**" in md
     assert "Route type **B**" in md
+
+
+def test_pipeline_gate_and_outputs(tmp_path):
+    from rater_audit.pipeline import run
+    b = ROOT / "examples" / "batch"
+    if not (b / "ratings.csv").exists():
+        subprocess.run([sys.executable, str(ROOT / "examples" / "make_example_batch.py")], check=True)
+    res, code = run(b, ROOT / "examples" / "rater_audit.toml", tmp_path)
+    assert res["gate"]["status"] == "FAIL" and code == 1
+    assert (tmp_path / "results.json").exists() and (tmp_path / "qa_summary.md").exists()
+
+
+def test_contract_rejects_duplicates(tmp_path):
+    from rater_audit.pipeline import load_batch, ContractError
+    pd.DataFrame({"item": ["a", "a", "b", "b"], "rater": ["x", "x", "x", "y"], "label": [1, 1, 0, 0]}).to_csv(tmp_path / "ratings.csv", index=False)
+    pd.DataFrame({"item": ["a"], "label": [1]}).to_csv(tmp_path / "gold.csv", index=False)
+    with pytest.raises(ContractError):
+        load_batch(tmp_path)
+
+
+def test_planning_sizes():
+    from rater_audit.planning import gold_per_rater, canaries_per_rater
+    assert gold_per_rater(0.05, 0.90) == 139
+    c = canaries_per_rater(0.5)
+    assert c["power"] >= 0.90 and c["honest_false_flag"] < 0.01
+
+
+def test_dices_and_cached_model_replay():
+    from rater_audit.dices import load
+    from rater_audit.llm import unsafe_verdict
+    m, items, raters = load()
+    assert m.shape == (350, 123) and set(items["gold"].unique()) == {0, 1}
+    first = items.iloc[0]
+    assert unsafe_verdict("openai/gpt-4o-mini", first["context"], first["response"]) in (0, 1)

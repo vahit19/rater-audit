@@ -2,87 +2,109 @@
 
 **Your experts agree with each other. That does not mean they are right.**
 
-Expert ratings train and evaluate AI models. They are checked with agreement scores, rater screens and small
-acceptance samples, and each of those can pass bad work. This repo audits every stage of an expert-data quality
-pipeline, shows what goes wrong, measures a fix, and turns it into a QA summary for each delivered batch.
-Every simulated result has a control arm where nothing should go wrong; two results use 3,355 real expert votes.
+Expert ratings train and evaluate AI models, and they are usually checked with agreement scores, rater screens and
+small acceptance samples. rater-audit measures where those checks mislead, tests fixes on real ratings with an
+expert gold label, and runs as a per-batch quality gate next to a rating platform.
 
 Video Overview
 
 https://github.com/user-attachments/assets/092f2336-4422-493e-8f45-41cf73e24b4a
 
-![Agreement stays high while the majority is wrong on hard items](figures/fig1_agreement_vs_accuracy.png)
-*Experts agree on 84% of ratings, but on hard items the majority is right only 36% of the time; agreement stays high as hard items grow.*
+## On real ratings with an expert gold label
 
-![The agreement screen drops the expert who is right; screening on gold accuracy does not](figures/fig2_rater_screens.png)
-*Dropping the least-agreeing raters removes a deep expert (green star, red ring) in every run and lowers hard-item accuracy; screening on gold accuracy raises it.*
+DICES-350: 350 real chatbot conversations, 123 real raters who each rated all of them for safety, and an expert
+safety label per conversation. A production batch is rebuilt by drawing 3 real raters per conversation; 20% of
+conversations serve as the gold set and every number below is measured on the other 80% (200 random splits).
+
+![Real ratings against the expert label; agreement and accuracy of 123 real raters](figures/fig9_dices_real_pipeline.png)
+*Left: no number of crowd raters reaches the expert label; five reviewers chosen on the gold set do best at the same cost. Right: a rater's agreement with the panel says little about their accuracy (correlation 0.18).*
+
+| Check | What it suggests | What the expert label shows |
+|---|---|---|
+| 3 raters per item | raw agreement 64% | the majority matches the expert 63% and catches 44% of expert-unsafe responses |
+| More raters | 5, or all 123 | 64% and 65%: the gap is systematic; more votes do not close it |
+| **Qualified reviewers** | 5 raters chosen on gold accuracy | **69%** match, **59%** of unsafe caught, vs 64% and 42% for 5 random raters (same cost) |
+| Rater screens | drop 12 of 123 raters | screens barely move batch accuracy (62% to 64%); screening on gold accuracy targets the weakest raters (54% vs 62%); speed screening removes no one worse |
+| LLM as rater | GPT-4o-mini on the same 350 | 59% match: a model judge does not replace the expert label either |
+| Canary items | 20 items where the model is known to be wrong | a rater copying the model on 70% of items is flagged 87% of the time (50%: 47%); honest real raters 0.8% |
+| Acceptance | 98-item review for a 5% contract | no method passes (defect rates 31% to 38%): the contract target must be set against the expert policy |
+
+## Why it happens: the mechanism, with a known answer
+
+Simulated panels where the truth is known show the mechanism in isolation, each with a control arm where nothing
+should go wrong (300 runs per arm).
+
+![Agreement stays high while the majority is wrong on hard items](figures/fig1_agreement_vs_accuracy.png)
+*Experts agree on 84% of ratings, but on hard items where a plausible wrong answer pulls the majority, it is right only 36% of the time.*
 
 <p align="center"><img src="figures/fig3_route_hard_items.png" width="62%" alt="The fix: route the weak item type to qualified reviewers"></p>
 <p align="center"><i>The fix: find the weak item type on gold items and route it to qualified reviewers. Hard items go from 36% to 76% correct, for half an extra label per item.</i></p>
 
-| Stage | What looks fine | What is true | Control |
-|---|---|---|---|
-| Production | experts agree on 84% of ratings | on hard items the majority is right 36% of the time | no hard items: 99.5% right |
-| Rater screen | dropping the least-agreeing raters raises alpha (0.68 to 0.71) | it drops a deep expert in every run; hard-item accuracy falls from 41% to 32% | equal skill: no change |
-| **Fix: route by type** | find the weak item type on gold, qualify reviewers, route it | hard items 36% to **76%**, all items 87% to **94.5%**, for 0.5 extra labels per item | no hard items: nothing routed |
-| Acceptance | "check 20 items, allow 1 defect" | passes a batch with 8% defects 52% of the time; a sized plan (98 items, 4 defects) cuts it to 10% | exact maths matches 20,000 simulated batches |
-| Model-written ratings | a verified expert who lets a model write ratings agrees with the panel 96% of the time | 20 canary items catch one who copies half the time in 92% of runs | honest rater wrongly flagged 0.08% |
-| Ranking (real votes) | a GPT-4 judge separates Claude-v1 from GPT-3.5 (71% vs 61% win rate) | expert votes cannot (65.0% vs 65.2%): five tiers, not six ranks; a 10-question sprint finds the top model 77% of the time | 2,000 question resamples |
-| Judges and screens (real votes) | GPT-4 agrees with experts 86% (ties excluded), reproducing the published "over 80%" | GPT-4 changes 16% of verdicts when the two answers swap places; a two-sigma screen flags 2 experts | noise alone would flag 1.5; 59% of the spread between experts is sampling noise |
+The simulation also shows an agreement screen dropping a deep expert in every run; on the real DICES raters that did
+not happen, so it holds only when a few experts are right where most raters are wrong. The sensitivity sweep
+(`exp8`) maps where each finding holds: the screen stops removing deep experts once typical raters are right on
+45% or more of hard items, while routing to qualified reviewers helps in every setting tested.
 
-## QA summary for a delivered batch
+## As a system: a quality gate per batch
+
+![How rater-audit sits next to a rating platform](figures/fig11_system.png)
 
 ```bash
 uv sync
-uv run python examples/make_example_batch.py          # a synthetic batch with a known answer
-uv run python -m rater_audit.report examples/batch/ratings.csv --gold examples/batch/gold.csv \
-    --canary examples/batch/canary.csv --review examples/batch/review.csv --out qa_summary.md
+uv run python -m rater_audit plan --raters 40 --items 20000       # size gold, canaries and the acceptance review
+uv run python examples/make_example_batch.py                     # or export a real batch from the platform
+uv run python -m rater_audit run examples/batch --config examples/rater_audit.toml
+#   gate: FAIL  - acceptance review over the defect limit  - route item type B ...   (exit 0 PASS, 2 ACTION, 1 FAIL)
 ```
 
-Inputs are plain CSV files: ratings (`item, rater, label, type`), gold items (`item, label`), canary items
-(`item, model_label`) and an acceptance review (`item, defect`). The summary reports agreement next to accuracy
-with intervals, the weak item types to route, raters judged on gold accuracy (and which ones an agreement screen
-would wrongly drop), canary flags, the sized acceptance plan with a decision, and what to change for the next batch.
-Example output: [examples/qa_summary.md](examples/qa_summary.md).
+A batch is four CSV files with a fixed data contract (ratings, gold, canaries, acceptance review). Each run
+validates the contract, writes `results.json` for dashboards and alerts and `qa_summary.md` for the client
+([example](examples/qa_summary.md)), and returns an exit code so a delivery pipeline can block a failing batch.
+Every threshold lives in the TOML config, not in the code. Build plan and integration points:
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 <details>
-<summary>The pipeline, stage by stage, and all figures</summary>
+<summary>All figures and the pipeline, stage by stage</summary>
 
 | # | Stage | Check in this repo |
 |---|---|---|
-| 1 | Scope and quality bar | acceptance plan from the contract limit and both risks (exp 4) |
-| 2 | Guidelines and gold set | gold items stratified by item type and difficulty (exp 2, 3) |
-| 3 | Rater qualification | 30-item qualification test on the weak type (exp 3) |
-| 4 | Pilot batch and calibration | final-label accuracy on gold, per item type, with intervals (exp 3, report) |
-| 5 | Production monitoring | agreement vs accuracy (exp 1), rater screens (exp 2, 7), canary items (exp 5) |
-| 6 | Review and adjudication | routing the weak type to qualified reviewers (exp 3) |
-| 7 | Client acceptance | sized sampling plan, defect rate with an interval (exp 4) |
-| 8 | Delivery | QA summary per batch (`rater_audit.report`) |
+| 1 | Scope and quality bar | acceptance plan sized from the contract limit and both risks (`plan`, exp 4) |
+| 2 | Guidelines and gold set | gold items per rater and by item type (`plan`, exp 3, 9) |
+| 3 | Rater qualification | reviewers chosen on gold accuracy (exp 3, 9) |
+| 4 | Pilot batch and calibration | accuracy on gold per item type, with intervals (`run`) |
+| 5 | Production monitoring | agreement vs accuracy (exp 1, 9), rater screens (exp 2, 7, 9), canary items (exp 5, 10) |
+| 6 | Review and adjudication | routing the weak type to qualified reviewers (exp 3, 9) |
+| 7 | Client acceptance | sized sampling plan, defect rate with an interval (exp 4, 9) |
+| 8 | Delivery | QA summary and quality gate per batch (`run`) |
 | 9 | Post-mortem | "for the next batch" section of the summary |
-| — | Evaluation sprints on top of the data | ranking tiers, judge bias, sprint size on real votes (exp 6, 7) |
+| — | Evaluations built on the ratings | ranking tiers, judge position bias, sprint size on 3,355 MT-Bench expert votes (exp 6, 7) |
 
 | | |
 |---|---|
-| ![](figures/fig2_rater_screens.png) | ![](figures/fig3_route_hard_items.png) |
+| ![](figures/fig10_dices_llm_canary.png) | ![](figures/fig2_rater_screens.png) |
+| *Real model outputs: GPT-4o-mini against the expert label, and canaries built from its real errors.* | *Simulation: an agreement screen drops the expert who is right when most raters share an error.* |
 | ![](figures/fig4_acceptance.png) | ![](figures/fig5_llm_written_ratings.png) |
-| *Chance that a batch passes, by its true defect rate: a 20-item check passes an 8% batch half the time; the sized plan (98 items, 4 defects) does not.* | *Canary items catch a rater who lets a model write the ratings; honest raters are almost never flagged (control).* |
+| *Chance that a batch passes, by its true defect rate: a 20-item check passes an 8% batch half the time; the sized plan (98 items, 4 defects) does not.* | *Simulation: canary items catch a rater who lets a model write the ratings; honest raters are almost never flagged.* |
 | ![](figures/fig6_model_ranking.png) | ![](figures/fig7_judges_real_data.png) |
 | *Real expert votes: six models fall into five tiers, and a GPT-4 judge separates two models the experts cannot. Even 40 questions recover the full ranking only about half the time.* | *Real expert votes: most of the spread between experts is sampling noise, and GPT-4 changes 16% of verdicts when the two answers swap places.* |
-
-Simulation set-up: 2,000 items, 10 raters, 3 ratings per item, 20% hard items on which typical raters are right
-30% of the time and two deep experts 85%; 300 runs per arm (500 for canaries). Gold items are a random 10%.
+| ![](figures/fig8_sensitivity.png) | |
+| *Each simulation assumption moved one at a time: where the findings hold and where they stop.* | |
 </details>
 
 ## Reproduce
 
 ```bash
-uv sync && uv run pytest -q                                   # 10 tests
+uv sync && uv run pytest -q
 for e in experiments/exp*.py; do uv run python "$e"; done     # results/*.json and figures/*.png
 ```
 
-**Limits.** Experiments 1 to 5 are simulations with assumed skill levels; they show the mechanism and its size under
-those assumptions, not rates in any particular company. Experiments 6 and 7 use one public dataset of pairwise votes
-on six 2023 models. Canary items assume a model answer that is known to be wrong.
+Model calls are cached in `data/llm_cache.jsonl`, so every number replays offline; a new model needs
+`OPENROUTER_API_KEY` or `OPENAI_API_KEY`.
 
-Data: MT-Bench human judgments (Zheng et al., 2023, [arXiv:2306.05685](https://arxiv.org/abs/2306.05685)), CC-BY-4.0.
+**Limits.** DICES is one safety task where disagreement partly reflects legitimate differences in perspective; the
+expert label stands for the client's policy. Experiments 1 to 5 are simulations with assumed skill levels. MT-Bench
+covers pairwise votes on six 2023 models.
+
+Data: DICES (Aroyo et al., 2023, [arXiv:2306.11247](https://arxiv.org/abs/2306.11247)) and MT-Bench human judgments
+(Zheng et al., 2023, [arXiv:2306.05685](https://arxiv.org/abs/2306.05685)), both CC-BY-4.0.
 Code: MIT. Author: Vahit FERYAD &lt;vahit.feryat@gmail.com&gt;

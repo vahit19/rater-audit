@@ -1,0 +1,12 @@
+# Quality settings for one client contract. Every number here is a business decision, not a constant in the code.
+
+[contract]
+max_defect = 0.05      # defect rate the contract allows
+good = 0.02            # a batch this clean should almost always pass
+bad = 0.08             # a batch this bad should almost never pass
+
+[raters]
+accuracy_floor = 0.80  # gold accuracy below this (whole interval) means retrain or remove
+
+[canary]
+canary_margin = 0.10   # flag when a rater matches the model this much above the panel median
