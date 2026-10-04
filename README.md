@@ -15,6 +15,8 @@ https://github.com/user-attachments/assets/092f2336-4422-493e-8f45-41cf73e24b4a
 
 ![The agreement screen drops the expert who is right; screening on gold accuracy does not](figures/fig2_rater_screens.png)
 
+<img src="figures/fig3_route_hard_items.png" width="62%" alt="The fix: route the weak item type to qualified reviewers">
+
 | Stage | What looks fine | What is true | Control |
 |---|---|---|---|
 | Production | experts agree on 84% of ratings | on hard items the majority is right 36% of the time | no hard items: 99.5% right |
