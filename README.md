@@ -67,7 +67,7 @@ Example output: [examples/qa_summary.md](examples/qa_summary.md).
 | ![](figures/fig4_acceptance.png) | ![](figures/fig5_llm_written_ratings.png) |
 | *Chance that a batch passes, by its true defect rate: a 20-item check passes an 8% batch half the time; the sized plan (98 items, 4 defects) does not.* | *Canary items catch a rater who lets a model write the ratings; honest raters are almost never flagged (control).* |
 | ![](figures/fig6_model_ranking.png) | ![](figures/fig7_judges_real_data.png) |
-| *Real expert votes: six models fall into five tiers, and a GPT-4 judge separates two models the experts cannot. Small sprints rarely recover the full ranking.* | *Real expert votes: most of the spread between experts is sampling noise, and GPT-4 changes 16% of verdicts when the two answers swap places.* |
+| *Real expert votes: six models fall into five tiers, and a GPT-4 judge separates two models the experts cannot. Even 40 questions recover the full ranking only about half the time.* | *Real expert votes: most of the spread between experts is sampling noise, and GPT-4 changes 16% of verdicts when the two answers swap places.* |
 
 Simulation set-up: 2,000 items, 10 raters, 3 ratings per item, 20% hard items on which typical raters are right
 30% of the time and two deep experts 85%; 300 runs per arm (500 for canaries). Gold items are a random 10%.
