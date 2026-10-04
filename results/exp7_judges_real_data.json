@@ -1,0 +1,47 @@
+{
+  "expert_vs_expert": {
+    "with_ties": [
+      0.6552598225602028,
+      2367
+    ],
+    "ties_excluded": [
+      0.8270967741935484,
+      1550
+    ]
+  },
+  "gpt4_vs_expert": {
+    "with_ties": [
+      0.6616989567809239,
+      3355
+    ],
+    "ties_excluded": [
+      0.8562705495537811,
+      2129
+    ]
+  },
+  "gpt4_position_flip": {
+    "k": 380,
+    "n": 2400,
+    "rate": 0.15833333333333333,
+    "ci": [
+      0.14427589330150886,
+      0.17348277419207397
+    ]
+  },
+  "screen": {
+    "experts_with_min_pairs": 59,
+    "min_pairs": 20,
+    "pooled_agreement": 0.6553938356164384,
+    "flagged": [
+      "expert_35",
+      "expert_8"
+    ],
+    "flagged_n_pairs": [
+      64,
+      54
+    ],
+    "null_expected_flags": 1.5086,
+    "null_share_runs_with_any_flag": 0.8736,
+    "share_of_spread_explained_by_sampling_noise": 0.5877960922430415
+  }
+}

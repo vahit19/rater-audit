@@ -1,0 +1,150 @@
+{
+  "experts": {
+    "order": [
+      "gpt-4",
+      "gpt-3.5-turbo",
+      "claude-v1",
+      "vicuna-13b-v1.2",
+      "alpaca-13b",
+      "llama-13b"
+    ],
+    "win_rate": {
+      "gpt-4": 0.7327502429543246,
+      "gpt-3.5-turbo": 0.6518944519621109,
+      "claude-v1": 0.6501004016064257,
+      "vicuna-13b-v1.2": 0.48010849909584086,
+      "alpaca-13b": 0.2868369351669941,
+      "llama-13b": 0.15420129270544783
+    },
+    "ci": {
+      "gpt-4": [
+        0.6992719882895229,
+        0.7652427531522163
+      ],
+      "gpt-3.5-turbo": [
+        0.6204569896389759,
+        0.6837595075001512
+      ],
+      "claude-v1": [
+        0.6003482166726124,
+        0.6969567362701666
+      ],
+      "vicuna-13b-v1.2": [
+        0.4458477370296585,
+        0.5129235432417482
+      ],
+      "alpaca-13b": [
+        0.24705256570713394,
+        0.3271508553795069
+      ],
+      "llama-13b": [
+        0.12697413174879624,
+        0.18451988887253457
+      ]
+    },
+    "tiers": [
+      [
+        "gpt-4"
+      ],
+      [
+        "gpt-3.5-turbo",
+        "claude-v1"
+      ],
+      [
+        "vicuna-13b-v1.2"
+      ],
+      [
+        "alpaca-13b"
+      ],
+      [
+        "llama-13b"
+      ]
+    ]
+  },
+  "gpt4_judge": {
+    "order": [
+      "gpt-4",
+      "claude-v1",
+      "gpt-3.5-turbo",
+      "vicuna-13b-v1.2",
+      "alpaca-13b",
+      "llama-13b"
+    ],
+    "win_rate": {
+      "gpt-4": 0.8575,
+      "claude-v1": 0.70625,
+      "gpt-3.5-turbo": 0.60875,
+      "vicuna-13b-v1.2": 0.4575,
+      "alpaca-13b": 0.243125,
+      "llama-13b": 0.126875
+    },
+    "ci": {
+      "gpt-4": [
+        0.832484375,
+        0.881875
+      ],
+      "claude-v1": [
+        0.665625,
+        0.7468906249999999
+      ],
+      "gpt-3.5-turbo": [
+        0.578125,
+        0.638125
+      ],
+      "vicuna-13b-v1.2": [
+        0.426875,
+        0.49
+      ],
+      "alpaca-13b": [
+        0.214984375,
+        0.27375
+      ],
+      "llama-13b": [
+        0.100625,
+        0.155625
+      ]
+    },
+    "tiers": [
+      [
+        "gpt-4"
+      ],
+      [
+        "claude-v1"
+      ],
+      [
+        "gpt-3.5-turbo"
+      ],
+      [
+        "vicuna-13b-v1.2"
+      ],
+      [
+        "alpaca-13b"
+      ],
+      [
+        "llama-13b"
+      ]
+    ]
+  },
+  "sprint_size": {
+    "10": {
+      "top_model_recovered": 0.766,
+      "full_order_recovered": 0.406,
+      "mean_kendall_tau": 0.8914666666666667
+    },
+    "20": {
+      "top_model_recovered": 0.904,
+      "full_order_recovered": 0.454,
+      "mean_kendall_tau": 0.9144000000000001
+    },
+    "40": {
+      "top_model_recovered": 0.994,
+      "full_order_recovered": 0.534,
+      "mean_kendall_tau": 0.9370666666666668
+    },
+    "80": {
+      "top_model_recovered": 0.994,
+      "full_order_recovered": 0.526,
+      "mean_kendall_tau": 0.9362666666666669
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "good_rate": 0.02,
+  "bad_rate": 0.08,
+  "sized_plan": [
+    98,
+    4
+  ],
+  "zero_defect_n_for_5pct": 59,
+  "plans": {
+    "check 20, allow 0": {
+      "n": 20,
+      "c": 0,
+      "bad_batch_passes": 0.1886933291627967,
+      "good_batch_fails": 0.33239202824490577,
+      "pass_10pct_batch": 0.12157665459056935
+    },
+    "check 20, allow 1": {
+      "n": 20,
+      "c": 1,
+      "bad_batch_passes": 0.5168556407502692,
+      "good_batch_fails": 0.05989897854894899,
+      "pass_10pct_batch": 0.3917469981251679
+    },
+    "check 50, allow 2": {
+      "n": 50,
+      "c": 2,
+      "bad_batch_passes": 0.2259742754334942,
+      "good_batch_fails": 0.07842774835096988,
+      "pass_10pct_batch": 0.11172875634634728
+    },
+    "check 98, allow 4 (sized)": {
+      "n": 98,
+      "c": 4,
+      "bad_batch_passes": 0.09948323261827786,
+      "good_batch_fails": 0.04733256171467981,
+      "pass_10pct_batch": 0.027209788883407728
+    }
+  },
+  "control_max_gap_exact_vs_simulated": 0.004225724566505801,
+  "example_2_of_100": [
+    0.00550196755016235,
+    0.07001179072854388
+  ]
+}
